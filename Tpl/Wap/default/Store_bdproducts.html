@@ -1,0 +1,462 @@
+<include file="Store:header"/>
+
+<form id="search_form" name="search_form" action="" method="post">
+	<div class="m-l-search">
+		<!-- input type="hidden" name="token" value="<!--{$token}-->" /-->
+		<input type="hidden" name="twid" value="<!--{$twid}-->" />
+		<input id="search_name" class="inp-search" name="search_name" type="search" value="<!--{$keyword}-->" placeholder="输入关键字搜索" />
+		<input class="btn-search" name="search-btn" type="submit" onclick="return false;" value="" />
+	</div>
+</form>
+
+<div class="m-select c666 order_control">
+<span><a href="" onclick="return false;" order="time" class="arrow-down">时间<i><em></em></i></a></span>
+<span><a href="" onclick="return false;" order="salecount">销量<i><em></em></i></a></span>
+<span><a href="" onclick="return false;" order="price">价格<i><em></em></i></a></span>
+<span><a href="" onclick="return false;" order="discount">折扣<i><em></em></i></a></span>
+<input type="hidden" id="view_list" value="">
+<!-- <span class="filter"><a href="javascript:;" class="ary li">排列</a><a href="javascript:;" class="flt">筛选</a></span> -->
+</div>
+<style type="text/css">
+	/* top */
+	/*.m-hd div a.back{
+		border: none;
+	}
+	.m-hd div a.cat, .m-hd div.logo, .m-hd div.tit, .m-hd div a.uc{
+		border: none;
+	}
+	.m-hd div a.cart{
+		border: none;
+	}*/
+	.m_recommend {
+		position: relative;
+		width:630px;
+		height:123px;
+		line-height: 1.5;
+	}
+	.m_recommend a img {
+    width: 90px;
+    height: 90px;
+	}
+	.m_recommend h5, .tabs h5{
+		font-size: 15px;
+	    text-align: left;
+	    margin-left: 10px;
+	    display: block;
+	    height: 22px;
+	    font-weight: 700;
+	}
+	.m_recommend .small-rect{
+		position: absolute;
+		top: 3px;
+		left: 0;
+		width: 5px;
+		height: 17px;
+		background-color: #fe7e01;
+	}
+	.menu-tab {
+	    margin-top: 1px;
+	    height: 22px;
+	    border-bottom: 2px solid #f40;
+	    line-height: 1.5;
+	}
+
+	/* list */
+	.top1{
+	    padding-top: 62.376px;
+		font-family: sans-serif;
+	}
+
+	.common_div{
+		border: 0px solid black;
+	    position: relative;
+	    box-sizing: border-box;
+	    display: flex;
+	    -webkit-box-orient: vertical;
+	    flex-direction: column;
+	    align-content: flex-start;
+	    flex-shrink: 0;
+	}
+
+	.top_nav_bar{
+		display: flex;
+	    -webkit-box-orient: horizontal;
+	    flex-direction: row;
+	    height: 62.376px;
+	    border-bottom-width: 1px;
+	    border-bottom-style: solid;
+	    border-bottom-color: rgb(231, 231, 231);
+	    position: fixed;
+	    top: 0px;
+	    z-index: 10001;
+	    box-shadow: rgba(0, 0, 0, 0.0980392) 0px -1px 0px 0px inset;
+	    font-family: sans-serif;
+	    line-height: 27.6px;
+	    overflow: hidden;
+	    background-color: rgb(255, 255, 255);
+	}
+
+	.top_nav_item{
+		-webkit-box-flex: 1;
+	    flex: 1 1 0%;
+	    height: 62.376px;
+	    width: 103.5px;
+	    text-align: center;
+	    float: left;
+	    position: relative;
+	    color: rgb(97, 100, 109);
+	}
+
+	.t_n_item{
+		border: 0px solid black;
+	    position: relative;
+	    box-sizing: border-box;
+	    display: flex;
+	    -webkit-box-orient: vertical;
+	    flex-direction: column;
+	    align-content: flex-start;
+	    flex-shrink: 0;
+	    cursor: pointer;
+	    height: 62.376px;
+	    width: 103.5px;
+	    text-align: center;
+	    float: left;
+	    color: rgb(97, 100, 109);
+	}
+
+	.t_n_logo{
+		text-align: center;
+	    -webkit-box-pack: center;
+	    justify-content: center;
+	    -webkit-box-orient: horizontal;
+	    flex-direction: row;
+	    height: 34.776px;
+	}
+
+	.t_n_logo img{
+		display: inline-block;
+	    width: 26.496px;
+	    height: 26.496px;
+	    margin-top: 6.624px;
+	    position: relative;
+	    margin-left: auto;
+	    margin-right: auto;
+	}
+
+	#normal_rows a{
+		width:24.5%;
+	}
+	#normal_rows a img:first-child{
+		width:100%;
+		/*height:0;
+		padding-top: 60%;*/
+	}
+
+	.box_style{
+		border: 0px solid black; position: relative; box-sizing: border-box;
+	}
+
+	.hor_polt{
+		width:5.3%;
+		height:6.38%;
+	}
+
+	#ModBlock2{
+		/*height:19.91%*/
+	}
+</style>
+<!--
+旧的猜你喜欢
+<notempty name="recommands">
+<div class="m_recommend">
+	<h5>猜您喜欢</h5>
+	<div class="small-rect"></div>
+	<div class="als-container" id="demo3">
+		<if condition="count($recommands) gt 5">
+		<span class="als-prev">
+			<img src="<!--{$staticFilePath}-->/images/thin_left_arrow_333.png" alt="prev" title="previous" />
+		</span>
+		</if>
+		<div class="als-viewport">
+		  <ul class="als-wrapper">
+		  	<volist name="recommands" id="recommandlist">
+		   <li class="als-item">
+		   	<a href="<!--{:U('Store/bdproduct',array('id' => $recommandlist['goods_id']))}-->" target="blank"><img src="<!--{$recommandlist.logourl}-->"/></a>
+		   </li>
+		   </volist>
+		  </ul>
+	  	</div>
+	  	<if condition="count($recommands) gt 5">
+	  	<span class="als-next">
+	  		<img src="<!--{$staticFilePath}-->/images/thin_right_arrow_333.png" alt="next" title="next" />
+	  	</span>
+	  	</if>
+	</div>
+</div>
+</notempty>
+-->
+
+<!-- title -->
+<div class="tab-title">
+	<div class="menu-tab">
+		<ul class="m-tabs">
+			<li class="tabs">
+				<h5>所有商品</h5>
+			</li>
+		</ul>
+	</div>
+</div>
+
+
+<!-- 旧的列表
+<ul id="m_list" class="m-list ">
+<volist name="products" id="hostlist">
+	<li>
+		<span class="pic">
+			<a href="<!--{:U('Store/bdproduct',array('id' => $hostlist['id']))}-->">
+			<img src="<!--{$hostlist.logourl}-->" data-original="<!--{$hostlist.logourl}-->">
+		</a>
+		</span>
+		<span class="con">
+			<a class="t" href="<!--{:U('Store/bdproduct',array('id' => $hostlist['id']))}-->"><!--{$hostlist.name}--></a>
+			<b>￥<!--{$hostlist.price}--></b><del>￥<!--{$hostlist.oprice}--></del>
+			<span style="color:#999;font-size:8px;margin-top:15px;"><!--{$hostlist['salecount'] + $hostlist['fakemembercount']}-->人付款</span>
+		</span>
+	</li>
+</volist>
+</ul>
+-->
+
+<!-- 新列表 -->
+<div id="blockRefs">
+	<div class="box_style" style="display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0;">
+
+		<!--   猜你喜欢  -->
+		<notempty name="recommands">
+		<div id="ModBlock2" class="common_div">
+			<div class="box_style" style=" display: flex; -webkit-box-orient: horizontal; flex-direction: row; align-content: flex-start; flex-shrink: 0; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; height: 66.368px; background-color: rgb(238, 238, 238);"><div class="common_div hor_polt" style="opacity: 0.2; background-color: rgb(0, 0, 0);"></div><div class="common_div"><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: large; margin-left: 5.52px; margin-right: 5.52px; color: rgb(5, 27, 40);">猜你喜欢</span></div><div class="common_div hor_polt" style=" opacity: 0.2; background-color: rgb(0, 0, 0);"></div></div>
+		</div>
+
+		<div id="ModBlock5" class="common_div">
+			<div id="itemList" class="common_div">
+
+			<div class="common_div">
+			<div container="#itemList" class="common_div"></div></div>
+
+			<div id="normal_rows" class="box_style" style=" display: flex; -webkit-box-orient: horizontal; flex-flow: row wrap; align-content: flex-start; flex-shrink: 0; -webkit-box-pack: justify; justify-content: space-between; background-color: rgb(238, 238, 238);" data-bind="1">
+
+			<volist name="recommands" id="recommandlist">
+
+				<a onclick="return markImg(this, <!--{$recommandlist['id']}-->);" href="<!--{:U('Store/bdproduct',array('id' => $recommandlist['id']))}-->" data-spm="1" style="text-decoration: none; display: flex; margin-bottom: 3.312px; border-bottom-color: rgb(235, 235, 235); -webkit-box-orient: vertical; flex-direction: column; background-color: rgb(255, 255, 255);"><img isonce="1" src="<!--{$recommandlist.logourl}-->" style="display: flex; "><div class="common_div" style=" margin: 7.728px 8.832px;"><span class="common_div" style=" font-size: large; color: rgb(102, 102, 102); height: 34.3467px; overflow: hidden; line-height: 17.1725px;"><!--{$recommandlist.name}--></span><div class="box_style" style="display: flex; -webkit-box-orient: horizontal; flex-flow: row wrap; align-content: flex-start; flex-shrink: 0; margin-top: 11.04px; -webkit-box-align: center; align-items: center;"><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: 11.04px; color: rgb(238, 94, 47); margin-top: 2.76px;">￥</span><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: 17.664px; color: rgb(238, 94, 47);"><!--{$recommandlist.price}--></span></div></div>
+				</a>
+			</volist>
+
+			</div>
+
+			</div>
+		</div>
+
+		</notempty>
+
+		<!--   食品  -->
+		<div id="ModBlock2" class="common_div">
+			<div class="box_style" style=" display: flex; -webkit-box-orient: horizontal; flex-direction: row; align-content: flex-start; flex-shrink: 0; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; height: 66.368px; background-color: rgb(238, 238, 238);"><div class="common_div hor_polt" style="opacity: 0.2; background-color: rgb(0, 0, 0);"></div><div class="common_div"><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: large; margin-left: 5.52px; margin-right: 5.52px; color: rgb(5, 27, 40);">食品</span></div><div class="common_div hor_polt" style=" opacity: 0.2; background-color: rgb(0, 0, 0);"></div></div>
+		</div>
+
+		<div id="ModBlock5" class="common_div">
+			<div id="itemList" class="common_div">
+
+			<div class="common_div">
+			<div container="#itemList" class="common_div"></div></div>
+
+			<div id="normal_rows" class="box_style" style=" display: block; -webkit-box-orient: horizontal; flex-flow: row wrap; align-content: flex-start; flex-shrink: 0; -webkit-box-pack: justify; justify-content: space-between; background-color: rgb(238, 238, 238);" data-bind="1">
+
+			<volist name="products" id="hostlist">
+			<if condition="$hostlist['cat_name'] eq '零食'">
+				<a onclick="return markImg(this, <!--{$hostlist['id']}-->);" href="<!--{:U('Store/bdproduct',array('id' => $hostlist['id']))}-->" data-spm="1" style="text-decoration: none; display: block; float:left; margin-left: 0.5%; margin-bottom: 3.312px; border-bottom-color: rgb(235, 235, 235); -webkit-box-orient: vertical; flex-direction: column; background-color: rgb(255, 255, 255);"><img isonce="1" src="<!--{$hostlist.logourl}-->" style="display: flex; "><div class="common_div" style=" margin: 7.728px 8.832px;"><span class="common_div" style=" font-size: large; color: rgb(102, 102, 102); height: 34.3467px; overflow: hidden; line-height: 17.1725px;"><!--{$hostlist.name}--></span><div class="box_style" style="display: flex; -webkit-box-orient: horizontal; flex-flow: row wrap; align-content: flex-start; flex-shrink: 0; margin-top: 11.04px; -webkit-box-align: center; align-items: center;"><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: 11.04px; color: rgb(238, 94, 47); margin-top: 2.76px;">￥</span><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: 17.664px; color: rgb(238, 94, 47);"><!--{$hostlist.price}--></span></div></div>
+				</a>
+			</if>
+			</volist>
+
+			</div>
+
+			</div>
+		</div>
+
+		<!--  鞋子  -->
+		<div id="ModBlock2" class="common_div">
+			<div class="box_style" style=" display: flex; -webkit-box-orient: horizontal; flex-direction: row; align-content: flex-start; flex-shrink: 0; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; height: 66.368px; background-color: rgb(238, 238, 238);"><div class="common_div hor_polt" style="opacity: 0.2; background-color: rgb(0, 0, 0);"></div><div class="common_div"><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: large; margin-left: 5.52px; margin-right: 5.52px; color: rgb(5, 27, 40);">鞋子</span></div><div class="common_div hor_polt" style=" opacity: 0.2; background-color: rgb(0, 0, 0);"></div></div>
+		</div>
+
+		<div id="ModBlock5" class="common_div">
+			<div id="itemList" class="common_div">
+
+			<div class="common_div">
+			<div container="#itemList" class="common_div"></div></div>
+
+			<div id="normal_rows" class="box_style" style=" display: block; -webkit-box-orient: horizontal; flex-flow: row wrap; align-content: flex-start; flex-shrink: 0; -webkit-box-pack: justify; justify-content: space-between; background-color: rgb(238, 238, 238);" data-bind="1">
+
+			<volist name="products" id="hostlist">
+			<if condition="$hostlist['cat_name'] eq '鞋'">
+				<a onclick="return markImg(this, <!--{$hostlist['id']}-->);" href="<!--{:U('Store/bdproduct',array('id' => $hostlist['id']))}-->" data-spm="1" style="text-decoration: none; display: block; float:left; margin-left: 0.5%;margin-bottom: 3.312px; border-bottom-color: rgb(235, 235, 235); -webkit-box-orient: vertical; flex-direction: column; background-color: rgb(255, 255, 255);"><img isonce="1" src="<!--{$hostlist.logourl}-->" style="display: flex; "><div class="common_div" style=" margin: 7.728px 8.832px;"><span class="common_div" style=" font-size: large; color: rgb(102, 102, 102); height: 34.3467px; overflow: hidden; line-height: 17.1725px;"><!--{$hostlist.name}--></span><div class="box_style" style="display: flex; -webkit-box-orient: horizontal; flex-flow: row wrap; align-content: flex-start; flex-shrink: 0; margin-top: 11.04px; -webkit-box-align: center; align-items: center;"><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: 11.04px; color: rgb(238, 94, 47); margin-top: 2.76px;">￥</span><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: 17.664px; color: rgb(238, 94, 47);"><!--{$hostlist.price}--></span></div></div>
+				</a>
+			</if>
+			</volist>
+
+			</div>
+
+			</div>
+		</div>
+
+		<!--  包包  -->
+		<div id="ModBlock2" class="common_div">
+			<div class="box_style" style=" display: flex; -webkit-box-orient: horizontal; flex-direction: row; align-content: flex-start; flex-shrink: 0; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; height: 66.368px;background-color: rgb(238, 238, 238);"><div class="common_div hor_polt" style=" opacity: 0.2; background-color: rgb(0, 0, 0);"></div><div class="common_div"><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: large; margin-left: 5.52px; margin-right: 5.52px; color: rgb(5, 27, 40);">包包</span></div><div class="common_div hor_polt" style=" opacity: 0.2; background-color: rgb(0, 0, 0);"></div></div>
+		</div>
+
+		<div id="ModBlock5" class="common_div">
+			<div id="itemList" class="common_div">
+
+			<div class="common_div">
+			<div container="#itemList" class="common_div"></div></div>
+
+			<div id="normal_rows" class="box_style" style=" display: block; -webkit-box-orient: horizontal; flex-flow: row wrap; align-content: flex-start; flex-shrink: 0; -webkit-box-pack: justify; justify-content: space-between; background-color: rgb(238, 238, 238);" data-bind="1">
+
+			<volist name="products" id="hostlist">
+			<if condition="$hostlist['cat_name'] eq '包'">
+				<a onclick="return markImg(this, <!--{$hostlist['id']}-->);" href="<!--{:U('Store/bdproduct',array('id' => $hostlist['id']))}-->" data-spm="1" style="text-decoration: none; display: block; float:left; margin-left: 0.5%; margin-bottom: 3.312px; border-bottom-color: rgb(235, 235, 235); -webkit-box-orient: vertical; flex-direction: column; background-color: rgb(255, 255, 255);"><img isonce="1" src="<!--{$hostlist.logourl}-->" style="display: flex; "><div class="common_div" style=" margin: 7.728px 8.832px;"><span class="common_div" style=" font-size: large; color: rgb(102, 102, 102); height: 34.3467px; overflow: hidden; line-height: 17.1725px;"><!--{$hostlist.name}--></span><div class="box_style" style="display: flex; -webkit-box-orient: horizontal; flex-flow: row wrap; align-content: flex-start; flex-shrink: 0; margin-top: 11.04px; -webkit-box-align: center; align-items: center;"><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: 11.04px; color: rgb(238, 94, 47); margin-top: 2.76px;">￥</span><span class="box_style" style=" display: block; -webkit-box-orient: vertical; flex-direction: column; align-content: flex-start; flex-shrink: 0; font-size: 17.664px; color: rgb(238, 94, 47);"><!--{$hostlist.price}--></span></div></div>
+				</a>
+			</if>
+			</volist>
+
+			</div>
+
+			</div>
+		</div>
+
+
+	</div>
+</div>
+
+<a class="more" id="show_more" page="2" style="display: none;" href="javascript:void(0);">加载更多</a>
+<input type="hidden" value="1" id="pageid" />
+<input type="hidden" id="canScroll" value="1" />
+<script type="text/javascript">
+$(function() {
+	$('#search_form').submit(function() {
+		var search_name = $('#search_name').val();
+		if (search_name == '') {
+			return false;
+		}
+	});
+	var keyword = '<!--{$keyword}-->';
+	//点击排序
+	var base_url = '<!--{:U('Store/bdproducts')}-->';
+	var b_url = '<if condition="$isSearch neq 1"><!--{:U('Store/ajaxProducts')}--><else/><!--{:U('Store/ajaxProducts')}--></if>'
+		method = 'DESC',
+		_get_method = '<!--{$method}-->',
+		order = '<!--{$order}-->',
+		_get_order  = '';
+	if (_get_order != '') {
+		order = _get_order;
+	}
+	$('.order_control a').removeClass('arrow-down');
+	if (_get_method == 'DESC')  {
+		method = 'ASC';
+		$('.order_control a[order="' + order + '"]').addClass('arrow-up');
+	} else {
+		$('.order_control a[order="' + order + '"]').addClass('arrow-down');
+	}
+	/*$('.order_control a').click(function() {
+		var order = $(this).attr('order');
+		var url = base_url + '&order=' + order+'&method='+method+'&keyword='+keyword;
+		location.href = url;
+	});*/
+
+
+	/*---------------------加载更多--------------------*/
+	var total = <!--{$count}-->,
+		pagesize = 8,
+		pages = Math.ceil(total / pagesize);
+	var com_link = '<!--{:U('Store/bdproduct')}-->';
+	var label_arr = ["\u8bf7\u9009\u62e9\u6807\u7b7e","\u70ed\u5356","\u7206\u6b3e"];
+	if (pages > 1) {
+		var _page = $('#show_more').attr('page');
+		$(window).bind("scroll",function() {
+			if ($(document).scrollTop() + $(window).height() >= $(document).height()) {
+				$('#show_more').show().html('加载中...');
+				if (_page > pages) {
+					$('#show_more').show().html('没有更多了').delay(2300).slideUp(1600);
+					return;
+				}
+				if($('#canScroll').val()==0){//不要重复加载
+					return;
+				}
+				$('#canScroll').attr('value',0);
+				$.ajax({
+					type : "GET",
+					data : {'page' : _page, 'inajax' : 1, 'keyword' : keyword},
+					url :  b_url + '&order=' + order + '&method=' + _get_method + '&pagesize='+pagesize,
+					dataType : "json",
+					success : function(RES) {
+						$('#canScroll').attr('value',1);
+						$('#show_more').hide().html('加载更多');
+						data = RES.products;
+						if(data.length){
+							$('#show_more').attr('page',parseInt(_page)+1);
+						}
+						_page = $('#show_more').attr('page');
+						var _tmp_html = '';
+						$.each(data, function(x, y) {
+							_tmp_html +=    '<li><span class="pic">' +
+							'<a href="' + com_link + '&id=' + y.id + '">' +
+							'<img src="' +y.logourl + '" />' +
+							'</a></span><span class="con"><a class="t" href="' + com_link + '&id=' + y.id + '">' + y.name + '</a><b>￥'+ y.price +'&nbsp;</b><del>￥' + y.oprice + '</del>' +
+							'<span style="color:#999;font-size:8px;margin-top:15px;">' + (parseInt(y.salecount) + parseInt(y.fakemembercount)) + '人付款</span></span></li>';
+						});
+						$('#m_list').append(_tmp_html);
+					}
+				});
+			}
+		});
+	}
+});
+//添加图片标记"√"
+function markImg(alink, mark_id){
+
+	$.get('/index.php/Wap/Store/bdmark/id/'+mark_id, '', function(new_pic){
+		$(alink).children('img').attr('src', new_pic);
+	});
+	return false;
+}
+</script>
+<script type="text/javascript">
+window.shareData = {
+            "moduleName":"Store",
+            "moduleID":"<!--{$products[0]['id']}-->",
+            "imgUrl": "<!--{$products[0]['logourl']}-->",
+            "timeLineLink": "<!--{$f_siteUrl}--><!--{:U('Store/bdproducts')}-->",
+            "sendFriendLink": "<!--{$f_siteUrl}--><!--{:U('Store/bdproducts')}-->",
+            "weiboLink": "<!--{$f_siteUrl}--><!--{:U('Store/bdproducts')}-->",
+            "tTitle": "<!--{$metaTitle}-->",
+            "tContent": "<!--{$metaTitle}-->"
+        };
+
+<if condition="count($recommands) gt 5">
+/************************图片滚动**********************/
+$($('head')[0]).append("<script src='<!--{$staticFilePath}-->/js/jquery.als-1.7.min.js' type='text/javascript'></"+"script>");
+$("#demo3").als({
+				visible_items: 5,
+				scrolling_items: 1,
+				orientation: "horizontal",
+				circular: "yes",
+				autoscroll: "yes",
+				interval: 4000
+});
+<else />
+	$('.als-viewport').css('height', 98).css('width', 618);
+	$('.als-wrapper').css('height', 98).css('width', 618);
+</if>
+</script>
+</body>
+<!--{$shareScript}-->
+</html>

@@ -162,7 +162,7 @@ class StoreAction extends WapAction{
 	public function login()
 	{
 		$userinfo = cookies('userinfo');
-
+		
         if ($userinfo) {
             $this->redirect(U('Store/dbproducts'));
         }
